@@ -78,3 +78,51 @@ try:
         st.info("No numeric columns found.")
 except:
     st.info("Run data cleaning first to enable EDA.")
+
+
+st.markdown("---")
+st.header("📈 Advanced EDA")
+
+# ---- Correlation Heatmap ----
+if st.button("Show Correlation Heatmap"):
+    res = requests.get("http://127.0.0.1:8000/eda/correlation")
+    data = res.json()
+
+    if "error" in data:
+        st.error(data["error"])
+    else:
+        corr_df = pd.DataFrame(data)
+        fig = px.imshow(corr_df, text_auto=True, aspect="auto")
+        st.plotly_chart(fig, use_container_width=True)
+
+# ---- Missing Values Chart ----
+if st.button("Show Missing Values per Column"):
+    res = requests.get("http://127.0.0.1:8000/eda/missing")
+    data = res.json()
+
+    if "error" in data:
+        st.error(data["error"])
+    else:
+        miss_df = pd.DataFrame({
+            "column": data.keys(),
+            "missing_values": data.values()
+        })
+        fig = px.bar(miss_df, x="column", y="missing_values")
+        st.plotly_chart(fig, use_container_width=True)
+
+st.markdown("---")
+st.header("🧠 Intelligent Insights")
+
+if st.button("Generate Insights"):
+    res = requests.get("http://127.0.0.1:8000/eda/insights")
+    data = res.json()
+
+    if "error" in data:
+        st.error(data["error"])
+    else:
+        if data["insights"]:
+            for insight in data["insights"]:
+                st.success(insight)
+        else:
+            st.info("No significant insights found.")
+
