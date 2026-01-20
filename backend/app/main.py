@@ -15,3 +15,6 @@ app.include_router(eda.router)
 @app.get("/")
 def root():
     return {"status": "IntelliDataX backend running"}
+
+from backend.app.api import ml
+app.include_router(ml.router)
